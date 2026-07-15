@@ -1,0 +1,11 @@
+# Core packet parsing (L2–L4 dissection)
+scapy>=2.5.0,<3.0
+
+# Data manipulation & feature engineering
+pandas>=2.0.0,<3.0
+
+# Train/test splitting, metrics, evaluation
+scikit-learn>=1.3.0,<2.0
+
+# Gradient boosting classifier (symmetric oblivious trees)
+catboost>=1.2.0,<2.0

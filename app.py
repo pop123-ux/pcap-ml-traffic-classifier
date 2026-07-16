@@ -22,22 +22,19 @@ def extract_features_from_pcap(pcap_path, label=None):
         print(f"[-] Error: File {pcap_path} not found.")
         return []
     
-    packets = []
+    # Iterative reader: never materialize the whole PCAP in memory (multi-GB
+    # captures would OOM otherwise). PcapReader auto-detects classic/PCAPNG.
+    packet_list = []
     try:
-        # We try to open with classic PCAP or PCAPNG
-        with PcapReader(pcap_path) as reader:
-            packets = reader.read_all()
+        reader = PcapReader(pcap_path)
     except Exception:
         try:
-            with PcapNgReader(pcap_path) as reader:
-                packets = reader.read_all()
-        except Exception as e:
+            reader = PcapNgReader(pcap_path)
+        except Exception:
             print("[-] Critical Error: The format of the file is not supported")
             return []
-        
-    packet_list = []
 
-    for pkt in packets:
+    for pkt in reader:
         if IP in pkt:
             # Core network layer features
             pkt_size = len(pkt)

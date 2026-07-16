@@ -9,3 +9,7 @@ scikit-learn>=1.3.0,<2.0
 
 # Gradient boosting classifier (symmetric oblivious trees)
 catboost>=1.2.0,<2.0
+
+# Optional — only needed for load_pretrained.py (fetches the CIC-IDS-2017 model
+# from Hugging Face Hub). Not required to run the standalone app.py pipeline.
+huggingface_hub>=0.20.0,<1.0

@@ -19,7 +19,7 @@ Usage:
 """
 import sys
 
-REPO_ID = "pop123/pcap-ml-traffic-classifier"   # <-- edit to your HF handle
+REPO_ID = "pop123ux/pcap-ml-traffic-classifier"
 MODEL_FILENAME = "cicids_catboost.cbm"
 
 

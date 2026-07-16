@@ -159,7 +159,7 @@ model = CatBoostClassifier(
 
 A production-grade CatBoost model trained on the full **CIC-IDS-2017** dataset (all 8 daily capture files, ~2.8 M labeled flows) is published on Hugging Face:
 
-- **Model:** https://huggingface.co/pop123/pcap-ml-traffic-classifier
+- **Model:** https://huggingface.co/pop123ux/pcap-ml-traffic-classifier
 - **Binary mirror:** [GitHub Releases](https://github.com/pop123-ux/pcap-ml-traffic-classifier/releases/latest)
 
 ### Reported metrics (stratified hold-out, 848,363 flows)

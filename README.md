@@ -155,11 +155,53 @@ model = CatBoostClassifier(
 
 ---
 
+## Pretrained Model
+
+A production-grade CatBoost model trained on the full **CIC-IDS-2017** dataset (all 8 daily capture files, ~2.8 M labeled flows) is published on Hugging Face:
+
+- **Model:** https://huggingface.co/pop123/pcap-ml-traffic-classifier
+- **Binary mirror:** [GitHub Releases](https://github.com/pop123-ux/pcap-ml-traffic-classifier/releases/latest)
+
+### Reported metrics (stratified hold-out, 848,363 flows)
+
+| Class | Precision | Recall | F1 | Support |
+|---|---|---|---|---|
+| Benign | 1.000 | 0.999 | 0.999 | 681,396 |
+| **Malicious** | **0.995** | **1.000** | **0.997** | 166,967 |
+| **Accuracy** | | | **0.999** | 848,363 |
+
+> Same-file hold-out. Cross-network generalization to unseen environments is expected to be lower — treat as a strong CIC-IDS-2017 benchmark, not a plug-and-play production IDS.
+
+### Using the pretrained model
+
+The CIC-IDS-2017 model consumes the standard **CICFlowMeter** 78-feature flow schema, so raw PCAPs must be pre-processed with [CICFlowMeter](https://github.com/ahlashkari/CICFlowMeter) first:
+
+```bash
+# 1. Convert your PCAP → CICFlowMeter CSV (external tool, one-time setup)
+cicflowmeter -f suspicious.pcap -c flows.csv
+
+# 2. Fetch the model from Hugging Face and classify
+pip install huggingface_hub
+python3 load_pretrained.py flows.csv
+```
+
+`load_pretrained.py` downloads the model on first run (cached under `~/.cache/huggingface`), verifies the input has all 78 required columns, and prints per-flow verdicts plus the top-confidence malicious flows.
+
+### Two pipelines — pick the one that fits your use case
+
+| Pipeline | Features | Training source | Strengths | Trade-offs |
+|---|---|---|---|---|
+| `app.py` | 4 packet-level (packet_size, ttl, protocol, tcp_flags) | Your own labeled PCAP pairs | Zero preprocessing, works on any PCAP directly, fast to retrain | Limited generalization across attack families — see the training notes in `app.py`'s docstring |
+| `load_pretrained.py` | 78 CICFlowMeter flow-level | CIC-IDS-2017 (pretrained) | State-of-the-art CIC-IDS benchmark scores | Requires CICFlowMeter preprocessing step |
+
+---
+
 ## Project Structure
 
 ```
 pcap-ml-traffic-classifier/
-├── app.py               # Full pipeline: extraction, training, inference, threat intel
+├── app.py               # Standalone pipeline: PCAP extraction, training, inference, threat intel
+├── load_pretrained.py   # Loads the CIC-IDS-2017 CatBoost model from Hugging Face
 ├── requirements.txt     # Pinned dependency ranges
 ├── .gitignore           # Excludes PCAPs, model binaries, CatBoost artifacts
 └── README.md
